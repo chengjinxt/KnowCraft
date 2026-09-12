@@ -1,0 +1,32 @@
+Microsoft store 页面无法打开，提示需要联网或刷新。大多数更新都将原因归咎于系统更新或 DNS 设置，但真实原因是  IE 设置太旧了 。
+
+开始菜单-搜索栏，搜索「Internet 选项」 ->高级-> 勾选「使用 TLS 1.2」和「使用 TLS 1.3」
+
+在[internet选项]窗口中-[连接]-[局域网设置]-取消勾选[代理服务器]相关选项。 就能打开微软商店了！
+
+
+如果安装应用时提示 
+
+“请稍后重试  我们这边出现了问题”
+
+不是 ChatGPT 客户端本身的问题，而是 Microsoft Store 下载链路连不上
+
+`0x80072efd` 通常表示 **Microsoft Store/Windows Update 访问微软服务时网络连接失败或超时**，常见原因就是代理、VPN、Clash、公司网络、防火墙或 WinHTTP 代理。
+
+管理员 PowerShell 执行
+netsh winhttp show proxy
+
+如果不是：
+Direct access (no proxy server).
+
+就执行：
+netsh winhttp reset proxy
+
+
+然后再执行：
+
+ipconfig /flushdns
+netsh winsock reset
+
+
+
