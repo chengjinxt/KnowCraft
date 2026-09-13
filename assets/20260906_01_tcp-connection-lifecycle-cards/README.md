@@ -90,10 +90,10 @@ TCP 是双向数据通道，两个发送方向可以独立关闭。B 收到 A �
 ## 术语速记
 
 - `SYN (Synchronize，同步序列号)`
-- `ACK (Acknowledgment，确认)`
+- `ACK (Acknowledgment，确认)` TCP标志位
 - `FIN (Finish，发送结束)`
 - `Seq (Sequence Number，序列号)`
-- `Ack (Acknowledgment Number，确认号)`
+- `Ack (Acknowledgment Number，确认号)` TCP字段
 - `TCP Segment（TCP 报文段）`
 
 ## 参考依据
@@ -107,3 +107,85 @@ TCP 是双向数据通道，两个发送方向可以独立关闭。B 收到 A �
 - 已人工检查三次握手和四次挥手的报文顺序、箭头方向、序列号关系及主要连接状态。
 - 四次挥手第一版曾出现第③步箭头方向错误，已重新生成最终版；错误版本未写入项目目录。
 - 卡片采用常见的主动关闭教学主流程，不展开同时打开、同时关闭、TCP Fast Open、RST 异常终止或操作系统实现差异。
+
+
+
+
+
+
+
+有一点需要修改。你这张图作为 **TCP 术语速记**整体没问题，但红框里的两个 **ACK** 很容易混淆，建议明确区分。
+
+### 主要问题：ACK 有两层含义
+
+你现在写的是：
+
+- `ACK (Acknowledgment, 确认)`
+- `Ack (Acknowledgment Number, 确认号)`
+
+这两个概念确实不同，但最好不要都简单翻译成“确认”。
+
+| 缩写            | 全称                  | 中文      | 本质           |
+| --------------- | --------------------- | --------- | -------------- |
+| **SYN**         | Synchronize           | 同步      | TCP 标志位     |
+| **ACK**         | Acknowledgment        | 确认      | TCP **标志位** |
+| **FIN**         | Finish                | 结束      | TCP 标志位     |
+| **Seq**         | Sequence Number       | 序列号    | TCP **字段**   |
+| **Ack**         | Acknowledgment Number | 确认号    | TCP **字段**   |
+| **TCP Segment** | TCP Segment           | TCP报文段 | TCP数据单位    |
+
+RFC 9293 中也明确区分了 **ACK control bit（ACK标志位）** 和 **Acknowledgment Number（确认号字段）**。([RFC 编辑器](https://www.rfc-editor.org/info/rfc9293/?utm_source=chatgpt.com))
+
+### 更推荐你改成这样
+
+```text
+术语速记
+
+• SYN  (Synchronize，同步)       → 标志位
+• ACK  (Acknowledgment，确认)    → 标志位
+• FIN  (Finish，结束)            → 标志位
+
+• Seq  (Sequence Number，序列号) → 字段
+• Ack  (Acknowledgment Number，确认号) → 字段
+
+• TCP Segment (TCP 报文段)
+```
+
+这样一眼就能看出：
+
+> **ACK = 确认标志位**
+> **Ack = 确认号**
+
+不过还有一个非常重要的细节：
+
+### Ack 确认号到底是什么意思？
+
+**Ack = 我下一步希望收到的序列号。**
+
+例如：
+
+```text
+A → B
+SEQ = 1000
+发送 500 字节
+
+B → A
+ACK = 1500
+```
+
+这里的：
+
+```text
+ACK = 1500
+```
+
+不是简单表示“收到了 1500”，而是：
+
+> **1000～1499 已经收到，我下一次希望收到 1500。**
+
+TCP 的确认机制是累计确认，RFC 规定 ACK 值 `X` 表示此前的序列号都已经被确认，下一期待序列号是 `X`。([IETF Datatracker](https://datatracker.ietf.org/doc/rfc9293/?utm_source=chatgpt.com))
+
+### 所以你的速记可以进一步优化成一句口诀
+
+> **SYN 建连接，FIN 结束连接；ACK 表示确认，Seq 表示我发什么，Ack 表示我下一步想收什么。**
+
