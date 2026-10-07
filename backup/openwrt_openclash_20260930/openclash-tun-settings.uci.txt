@@ -1,0 +1,11 @@
+# 2026-09-30 已验证的脱敏配置快照
+# 这些命令只记录本次调整，不包含订阅、节点、DNS 或认证信息。
+
+uci set openclash.config.enable='1'
+uci set openclash.config.core_type='Meta'
+uci set openclash.config.operation_mode='fake-ip'
+uci set openclash.config.en_mode='fake-ip-tun'
+uci set openclash.config.stack_type='system'
+uci set openclash.config.small_flash_memory='1'
+uci set openclash.config.enable_custom_clash_rules='1'
+uci commit openclash

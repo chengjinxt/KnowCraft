@@ -1,0 +1,84 @@
+- 在 Windows 下直接使用内置的 OpenSSH 客户端。
+
+- 在 `C:\Users\<你的用户名>\.ssh\config` 中配置路由器的免密别名：
+
+  代码段
+
+  ```
+  Host openwrt
+      HostName 192.168.100.1
+      User root
+      Port 22
+  ```
+
+- 打开终端直接敲 `ssh openwrt` 即可秒连。
+
+
+PS C:\Users\Administrator> ssh openwrt
+root@192.168.100.1's password:
+
+                       |\__/,|   (`\
+                     _.|o o  |_   ) )
+       -------------(((---(((-------------------
+              OpenWrt 01.16.2026 by sk
+       -----------------------------------------
+系统负载:  0.00 0.17 0.39       运行时间:  5 days
+内存已用:  45 % of 477MB        IP  地址:  192.168.100.1 192.168.1.15
+系统存储:  79% of 28.1M         CPU 信息: ARMv8 Processor x 2
+
+[root@OpenWrt:09:26 PM ~] # pwd
+/root
+
+
+
+PS C:\Users\Administrator> ssh openwrt
+root@192.168.100.1's password:
+
+                       |\__/,|   (`\
+                     _.|o o  |_   ) )
+       -------------(((---(((-------------------
+              OpenWrt 01.16.2026 by sk
+       -----------------------------------------
+系统负载:  0.02 0.03 0.03       运行时间:  6 days
+内存已用:  44 % of 477MB        IP  地址:  192.168.100.1 192.168.1.15
+系统存储:  79% of 28.1M         CPU 信息: ARMv8 Processor x 2
+
+[root@OpenWrt:10:49 PM ~] # vim /etc/openclash/custom/openclash_custom_rules.list
+rules:
+- DOMAIN-SUFFIX,chunhuixuefu.com,DIRECT
+- DOMAIN,chunhuixuefu.com,DIRECT
+
+
+修改后生效：
+/etc/init.d/openclash restart
+
+
+
+
+
+
+OpenWrt login: root
+Password: 
+
+                       |\__/,|   (`\
+                     _.|o o  |_   ) )
+       -------------(((---(((-------------------
+              OpenWrt 01.16.2026 by sk
+       -----------------------------------------
+系统负载:  0.54 0.45 0.56       运行时间:  5 days
+内存已用:  43 % of 477MB        IP  地址:  192.168.100.1 192.168.1.15
+系统存储:  79% of 28.1M         CPU 信息: ARMv8 Processor x 2
+
+[root@OpenWrt:09:19 PM ~] # cat /etc/openclash/custom/openclash_custom_rules.list
+rules:
+- DOMAIN,www.5k40.com,DIRECT
+- DOMAIN,555kp40.com,DIRECT
+- DOMAIN,www.555dyx9.com,DIRECT
+##- PROCESS-NAME,curl,DIRECT #匹配路由自身进程(curl直连)
+##- DOMAIN-SUFFIX,google.com,Proxy #匹配域名后缀(交由Proxy代理服务器组)
+##- DOMAIN-KEYWORD,google,Proxy #匹配域名关键字(交由Proxy代理服务器组)
+##- DOMAIN,google.com,Proxy #匹配域名(交由Proxy代理服务器组)
+##- DOMAIN-SUFFIX,ad.com,REJECT #匹配域名后缀(拒绝)
+##- IP-CIDR,127.0.0.0/8,DIRECT #匹配数据目标IP(直连)
+##- SRC-IP-CIDR,192.168.1.201/32,DIRECT #匹配数据发起IP(直连)
+##- DST-PORT,80,DIRECT #匹配数据目标端口(直连)

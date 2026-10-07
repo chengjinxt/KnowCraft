@@ -222,6 +222,30 @@ lipo -archs /path/to/MyApp
 
 在 Apple silicon 上，如果终端本身通过 Rosetta 运行，`uname -m` 可能报告 `x86_64`。因此还要结合“关于本机”、活动监视器、`file` / `lipo` 结果以及进程是否处于翻译状态判断。
 
+
+
+## IA32 和 IA-64区别
+
+
+
+IA32 和 IA-64 虽然名字很像，但实际上是两套完全不同的东西。
+
+ia32 = 32 位 x86  Intel Architecture
+x86-64 / x64 / AMD64 = 现在主流的 64 位 x86
+IA-64 = Intel Itanium 安腾，另一套已经基本淘汰的架构
+
+
+ia32 指：
+Intel Architecture 32-bit
+
+Intel Itanium 架构
+一句话记忆
+ia32 是 32 位 x86；IA-64 是 Itanium，二者不是一回事。
+
+
+
+
+
 ## 下载软件时怎样选择
 
 1. 先确认操作系统的原生架构，不要只看当前终端进程。

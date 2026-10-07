@@ -17,7 +17,7 @@
 - `SaaS (Software as a Service，软件即服务)` 交付可直接使用的完整应用，但客户仍要管理账号、权限、数据治理、配置和正确使用。
 - 三种模式不是“低级到高级”的排名。越靠近 SaaS，供应商托管范围通常越大；越靠近 IaaS，客户控制力和运维责任通常越大。
 - SaaS、PaaS、IaaS 可以组合：一个面向用户的 SaaS 产品，本身可以构建在 PaaS 和 IaaS 之上。
-- `AI SaaS` 仍然属于 SaaS，不是 NIST 定义之外的第四种官方云服务模型。`AI-enabled（AI 增强型）`、`AI-native（AI 原生）` 和 `Agentic（智能体型）` 描述的是产品能力或架构形态。
+- `AI SaaS` 仍然属于 SaaS，不是 NIST （**N**ational **I**nstitute of **S**tandards and **T**echnology  美国国家标准与技术研究院）定义之外的第四种官方云服务模型。`AI-enabled（AI 增强型）`、`AI-native（AI 原生）` 和 `Agentic（智能体型）` 描述的是产品能力或架构形态。
 - 传统 SaaS 以确定性的功能、表单和规则流程为主；AI SaaS 可以通过模型理解意图、检索依据、选择工具并协助完成任务，但输出和行动需要额外约束。
 - `RAG (Retrieval-Augmented Generation，检索增强生成)` 用授权资料为模型补充上下文和依据，但不能保证输出绝对正确。
 - `Agent（智能体）` 适合需要理解上下文、动态选择步骤或跨系统操作的任务。固定规则足以解决的流程，通常更便宜、稳定且容易审计。

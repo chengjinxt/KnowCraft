@@ -70,10 +70,11 @@ ACL 并非注册表专属。Windows 常见的可保护对象还包括：
 PowerShell：
 
 ```powershell
-$key = 'Registry::HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer'
-Get-Acl -LiteralPath $key | Format-List Owner, AccessToString, Sddl
-(Get-Acl -LiteralPath $key).Access |
+Push-Location HKCU:
+(Get-Acl -LiteralPath '.\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer').Access |
     Format-Table IdentityReference, RegistryRights, AccessControlType, IsInherited
+Pop-Location
+
 ```
 
 重点查看：
