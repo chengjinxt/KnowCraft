@@ -5,6 +5,7 @@
 - 本项目用于沉淀简单、准确、有吸引力的技术知识内容。
 - 默认面向有基础电脑使用经验、但不熟悉底层术语的中文读者。
 - 先讲结论和实际作用，再补充必要的技术边界；不要只堆定义。
+- 卡片要通俗易懂，详细细节可记录到`README.md` 
 
 ## 禁用工具
 
@@ -50,45 +51,3 @@
 - 生成器会完整保留卡片内容并用同图模糊背景填充 9:16 画布，不得为适配视频裁掉标题、正文或底部结论。
 - 默认生成无音轨视频。不得自动加入来源或授权不明确的音乐；确需音乐时，仅使用已核实授权范围的原创音乐，或在上传阶段通过 YouTube Shorts / YouTube Audio Library 添加，并按许可证要求署名。
 - 交付前使用 `ffprobe` 或同等工具确认视频只有一个 H.264 视频流、分辨率为 `1080 × 1920`、帧率为 30 fps、像素格式为 `yuv420p`、色彩标记为 BT.709、`color_range=tv`、无音频流，且时长与卡片数量一致。
-
-## Windows 注册表 ACL 知识锚点
-
-解释本项目中的 Windows 注册表权限内容时，以以下事实为基础：
-
-- `ACL (Access Control List，访问控制列表)`：描述哪些安全主体可以或不可以对注册表项执行哪些操作。
-- `ACE (Access Control Entry，访问控制条目)`：ACL 中针对某个用户或用户组的一条 `Allow` 或 `Deny` 规则。
-- `Securable Object（可保护对象）`：能够拥有 `Security Descriptor（安全描述符）` 的 Windows 对象；ACL 是安全描述符中的访问控制组成部分。
-- ACL 不是注册表专属机制。Windows 的文件与文件夹、注册表项、服务、打印机、网络共享、Active Directory 对象、进程和线程等都可以是可保护对象。
-- 不同对象支持的具体权限不同：文件常见 `Read / Write / Modify`，注册表项常见 `ReadKey / SetValue / FullControl`，但核心结构都是“哪个身份可以对哪个对象执行哪些操作”。
-- `HKCU (HKEY_CURRENT_USER，当前用户配置单元)`：保存当前登录用户的配置；它不代表所有子项都必然由当前用户完全控制。
-- `Advanced`、`RunMRU`、`Policies\Explorer` 是三个 `Registry Key（注册表项）`，不是三个注册表值。它们各自显示的 `FullControl` 或 `ReadKey`，是 ACL 在具体注册表对象上的权限配置。
-- `Registry Value（注册表值）` 是注册表项内部保存的数据，例如 `Hidden`、`MRUList` 或 `NoRun`；白话上可以理解为“Key 像文件夹，Value 像里面的数据，权限挂在 Key 上”。
-- `HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced`：Explorer 的高级设置和用户偏好，常见情况下需要当前用户可写。
-- `HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\RunMRU`：`MRU` 是 `Most Recently Used（最近使用）`，这里主要保存 `Win + R` 的运行历史，Explorer 需要更新它。
-- `HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer`：当前用户范围的 Explorer 策略位置；策略供应用读取并执行，权限可能由组策略、MDM、安全软件或人工加固控制。
-- `Full Control（完全控制）`：通常包含查询和设置值、创建子项、枚举、通知以及删除和修改安全信息等权限。
-- `Read Key（读取注册表项）`：通常包含查询值、枚举子项、变化通知和标准读取权限，不包含设置值、创建子项或删除权限。
-- 注册表 ACL 不在单独文件中，而是保存在每个注册表项的 `Security Descriptor（安全描述符）` 中；通常讨论访问权限时，重点是其中的 `DACL (Discretionary Access Control List，自主访问控制列表)`。
-- ACL 作用于注册表项，注册表值没有各自独立的 ACL；值的读写能力由所属注册表项的权限决定。
-- 图形界面查看方法：运行 `regedit`，定位并右键目标注册表项，依次选择“权限”→“高级”，查看所有者、权限条目和继承状态。
-- PowerShell 查看方法：先把目标路径保存到 `$key`，再读取 ACL，例如：
-
-  ```powershell
-  $key = 'Registry::HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer'
-  Get-Acl -LiteralPath $key | Format-List Owner, AccessToString, Sddl
-  (Get-Acl -LiteralPath $key).Access |
-      Format-Table IdentityReference, RegistryRights, AccessControlType, IsInherited
-  ```
-
-- 查看结果时重点解释 `IdentityReference（身份）`、`RegistryRights（注册表权限）`、`AccessControlType（Allow / Deny）` 和 `IsInherited（是否继承）`。
-- 白话结论可以写成“偏好能改、历史能写、策略只读”，但必须注明这是当前观察到的有效权限边界，不是所有 Windows 设备的固定默认状态。
-- 不能根据单独一条 ACE 直接断定最终有效权限。还要综合用户组、继承、显式规则、`Allow / Deny`、所有者以及进程访问令牌。
-- `Policies` 路径本身不自动产生只读权限；发现 `ReadKey` 时，应继续检查 ACL 是否停止继承、是否存在显式条目，以及由哪个管理组件设置。
-
-## 参考依据
-
-- Microsoft Learn：`Registry Key Security and Access Rights`
-- Microsoft Learn：`Checking the Registry for Policies and Preferences`
-- Microsoft Learn：`Implementing Registry-based Policy`
-- Microsoft Learn：`Access Control Overview`
-- Microsoft Learn：`Securable Objects`
