@@ -223,19 +223,19 @@ Add-ToolVersion 'llama-cli' @('--version')
 Add-ToolVersion 'llama-server' @('--version')
 
 Add-Section 'manual_inputs_needed'
-Add-Field 'model_file' '<填写完整模型文件名>'
-Add-Field 'model_file_size' '<填写实际文件大小>'
-Add-Field 'context_length' '<填写计划使用的上下文长度>'
-Add-Field 'multimodal' '<填写是否使用图片/音频输入>'
-Add-Field 'concurrency' '<填写同时运行的会话数>'
+Add-Field 'model_file' '<enter_full_model_filename>'
+Add-Field 'model_file_size' '<enter_actual_file_size>'
+Add-Field 'context_length' '<enter_planned_context_length>'
+Add-Field 'multimodal' '<enter_whether_image_or_audio_input_is_used>'
+Add-Field 'concurrency' '<enter_number_of_concurrent_sessions>'
 
 $fullOutputPath = [System.IO.Path]::GetFullPath($OutputPath)
 $outputDirectory = Split-Path -Parent $fullOutputPath
 if (-not (Test-Path -LiteralPath $outputDirectory)) {
     New-Item -ItemType Directory -Path $outputDirectory -Force | Out-Null
 }
-$utf8WithoutBom = [System.Text.UTF8Encoding]::new($false)
-[System.IO.File]::WriteAllLines($fullOutputPath, $script:ReportLines, $utf8WithoutBom)
+$utf8WithBom = [System.Text.UTF8Encoding]::new($true)
+[System.IO.File]::WriteAllLines($fullOutputPath, $script:ReportLines, $utf8WithBom)
 
 Write-Host "Report written to: $fullOutputPath"
 Write-Host 'Please fill in the [manual_inputs_needed] section before sending the report for analysis.'

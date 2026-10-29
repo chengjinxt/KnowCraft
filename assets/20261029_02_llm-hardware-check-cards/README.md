@@ -60,6 +60,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\collect-windows.ps1
 
 脚本主要通过 `Get-CimInstance` 读取 `Win32_OperatingSystem`、`Win32_ComputerSystem`、`Win32_Processor`、`Win32_PhysicalMemory`、`Win32_VideoController` 等信息。它不会修改系统配置。
 
+Windows PowerShell 5.1对“不带BOM的UTF-8脚本”兼容性较差。为避免中文系统名称或报告占位符出现乱码，Windows脚本自身只使用ASCII占位符，并把报告明确写成带 `BOM (Byte Order Mark，字节顺序标记)` 的UTF-8。生成后可直接用Windows记事本、PowerShell或其他常见编辑器打开。
+
 注意：`Win32_VideoController.AdapterRAM` 在部分设备上不准确，尤其可能无法正确表示4 `GiB (Gibibyte，2³⁰字节)` 以上显存。装有NVIDIA驱动时，脚本会优先额外调用 `nvidia-smi` 获取显卡名称、显存和驱动版本。
 
 ## macOS运行方法
@@ -165,6 +167,7 @@ sudo ./collect-linux.sh ./my-linux-report.txt
 - 卡片使用Codex内置 `imagegen` 生成；详细提示词记录在 `PROMPTS.md`。
 - 三个脚本只执行只读查询并写出报告，不修改驱动、页面文件、交换空间或其他系统设置。
 - Windows脚本已在Windows环境实际执行并生成完整报告；macOS和Linux脚本已通过Bash语法检查，并在Windows Git Bash中完成缺失命令容错冒烟测试。跨系统硬件枚举仍需在真实设备上复核。
+- Windows脚本的编码修订已在Windows PowerShell 5.1环境复测：报告以带BOM的UTF-8写出，系统返回的中文字段与ASCII手工填写占位符均可正确读取。
 - 最终卡片为 `1086 × 1448`、3:4；`shorts.mp4` 为4秒、单个H.264视频流、`1080 × 1920`、30 fps、`yuv420p`、BT.709、`color_range=tv`，无音轨。
 - 卡片和文档按公开发布内容脱敏，不包含真实设备报告、本机路径、账号或网络信息。
 - 仍需人工确认：不同系统版本、厂商驱动和精简发行版可能缺少个别命令；脚本会尽量记录 `not_found`，但不能替代目标设备实测。
