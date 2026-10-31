@@ -16,8 +16,8 @@
 | 02_plan-compare.png | 三档软件方案怎么选 | A 自研 / B 现成 / C 纯播放 |
 | 03_hardware.png | 硬件采购要点 | 屏幕、电源、存储、支架 |
 | 04_pi3b-limits.png | Pi 3B 怎么跑 | 老型号的性能边界与轻量路线 |
-| 05_os-compare.png | Stretch 和 Bookworm | 两代官方系统的区别 |
-| 06_flash.png | Bookworm 写卡步骤 | 官方写卡工具的操作要点 |
+| 05_os-compare.png | Stretch 和 Trixie | 两代官方系统的区别 |
+| 06_flash.png | Trixie 写卡步骤 | 官方写卡工具的操作要点 |
 | 07_ssh-access.png | 远程连 Pi 不用密码 | SSH（Secure Shell，安全外壳协议）密钥接入 |
 | 08_dual-card.png | 双卡并行怎么用 | 两张卡如何切换 |
 | 09_revoke.png | 怎么收回远程权限 | 查看、删除 authorized_keys |
@@ -63,29 +63,32 @@
 - 3B 可设 OTP（One-Time Programmable，一次性可编程）熔丝位开
   USB 启动，系统盘可用 USB 固态盘。
 
-### 系统对比：Stretch 与 Bookworm
+### 系统对比：Stretch 与 Trixie
 
 - 同宗同源：Raspbian 是树莓派基金会早期官方系统名（Debian 针对
   Pi 重新编译优化的版本），2020 年改叫 Raspberry Pi OS。
 - Stretch：Debian 9（2017 年），官方更新 2020 年停止，软件源已归档；
   自带 Python 3.5、老版本 Chromium；Kolibri、GCompris 新版装不上。
-- Bookworm：Debian 12（2023 年），持续更新；自带 Python 3.11、
-  现代 Chromium；新软件直接安装。
-- Bookworm 在 Pi 4/5 上默认 Wayland（新一代显示协议），
+- Trixie：Debian 13（2025 年），持续更新，安全更新到 2028 年、
+  长期支持到 2030 年；自带 Python 3.13、现代 Chromium、内核 6.12；
+  新软件直接安装。
+- Trixie 在 Pi 4/5 上默认 labwc Wayland（新一代显示协议），
   但 Pi 3B 上默认仍是 X11（老牌显示系统）+ RealVNC，
   与旧系统用法一致。
-- Bookworm 没有默认用户（Stretch 是 pi / raspberry），写卡时必须自建用户。
-- 32 位与 64 位：Stretch 只有 32 位；Bookworm 有 64 位版，
+- Trixie 也没有默认用户（Stretch 是 pi / raspberry），写卡时必须自建用户。
+- 32 位与 64 位：Stretch 只有 32 位；Trixie 有 64 位版，
   但 3B 只有 1GB 内存，32 位版更合适。
+- Kolibri 注意：Trixie 上须用官方给 Debian 13 单独准备的安装源，
+  不能照搬 Debian 12 的旧命令。
 
-### 写卡步骤：Bookworm 32-bit with desktop
+### 写卡步骤：Trixie 32-bit Full
 
 1. 在电脑上装官方写卡工具 Raspberry Pi Imager。
 2. 另买一张新卡（16GB 起步，32GB 更宽裕），不要覆盖旧卡。
-3. Imager 里选设备型号 → 系统选 Raspberry Pi OS (other) →
-   带 Bookworm 字样的 32-bit with desktop 版本；
-   如默认推荐已是更新版本，Bookworm 在同一子菜单里，
-   或从官网操作系统页直接下载 Bookworm 的 `.img.xz` 再用
+3. Imager 里选设备型号 → 系统选 Trixie 32-bit Full 版；
+   当前写卡工具（Imager 2.0.12）里，Trixie 32 位带桌面的就是
+   Full 版，Lite 是无桌面版；Bookworm 已归到 Legacy 组里。
+   或从官网操作系统页直接下载 Trixie 的 `.img.xz` 再用
    Imager 的 Use custom（使用自定义镜像）选取。
 4. 写卡设置一次填好：主机名、新建用户名和密码、WiFi 名称密码、
    国家选 CN、启用 SSH，并可直接粘贴 SSH 公钥。
@@ -148,13 +151,13 @@ grep 'Accepted publickey' /var/log/auth.log
 
 - 设备：树莓派（本组卡片以 Pi 3B 为例）；屏幕、电源、存储卡另购。
 - 网络：远程接入与写卡设置均假设电脑与 Pi 在同一局域网。
-- 内容中的“旧系统 / 新系统”指 Stretch 与 Bookworm 两代官方系统。
+- 内容中的“旧系统 / 新系统”指 Stretch 与 Trixie 两代官方系统。
 
 ## 排错方法
 
 - SSH 不通：先确认电脑与 Pi 在同一网段、Pi 的 22 端口通、
   SSH 服务已开启；再查用户名与密钥是否对应。
-- 写卡后进不去：Bookworm 没有默认用户，检查写卡时是否建好了用户。
+- 写卡后进不去：Trixie 没有默认用户，检查写卡时是否建好了用户。
 - 触屏点不准：优先确认是免驱 HID（Human Interface Device，
   人机接口设备）型号；偏移可用系统自带的触屏校准处理。
 - 莫名重启：先换官方电源排查供电。
@@ -186,13 +189,13 @@ grep 'Accepted publickey' /var/log/auth.log
 - 脱敏检查：卡片与本文档均不含真实局域网地址、密钥、本地绝对路径、
   账号、口令；需要表达连接关系时统一使用占位符
   （如 `<你的公钥>`、`<行尾标记>`）。
-- Content.md 与 9 张卡逐项对应；一级标题 9 字，正文 278 字，
+- Content.md 与 9 张卡逐项对应；一级标题 9 字，正文 277 字，
   均在项目限制内（一级标题 ≤ 20 字，正文 ≤ 500 字）。
 
 ## 仍需人工确认的风险
 
 - 硬件价格、型号供货以购买时为准；触屏型号的兼容性以实测为准。
-- Imager 中的 Bookworm 菜单位置可能随工具版本变化，
+- Imager 中的系统菜单位置可能随工具版本变化，
   以实际界面为准。
 - Pi 3B 的性能结论基于 1GB 内存机型；不同板子结论不同。
 - 本组卡片不含真实环境信息，照着做之前请按自家设备核对一遍。
