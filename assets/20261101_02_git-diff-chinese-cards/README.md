@@ -40,7 +40,7 @@ $env:LESSCHARSET = 'utf-8'
 git diff
 ```
 
-## 永久修复
+## 对 UTF-8 项目持久生效
 
 在 CMD 或 PowerShell 中执行一次：
 
@@ -62,7 +62,7 @@ $env:LESSCHARSET
 git diff
 ```
 
-预期环境变量值为 `utf-8`，中文差异正文应正常显示。
+预期环境变量值为 `utf-8`，UTF-8 中文差异正文应正常显示。这里的“持久”只表示以后新开的窗口仍采用 UTF-8 解释规则，不表示 `less` 可以自动识别所有文件编码。
 
 ## 四个设置的边界
 
@@ -79,6 +79,76 @@ git diff
 git config --global core.quotePath false
 ```
 
+## `less 551` 不是 `5.5.1`
+
+Less 的发布号使用连续整数。命令输出中的：
+
+```text
+less 551
+```
+
+意思是 `Version 551（第 551 版）`，不是语义化版本 `5.5.1`。官方发布记录显示，551 版发布于 2019 年 6 月；相邻版本号也写成 530、551、561 等连续整数。
+
+## `LESSCHARSET` 支持范围
+
+在本次复现所用的 `less 551` 上逐项实测，以下名称可接受：
+
+```text
+ascii
+iso8859
+latin1
+latin9
+dos
+ebcdic
+IBM-1047
+koi8-r
+next
+utf-8
+windows
+```
+
+以下名称会直接报 `invalid charset name`：
+
+```text
+gbk
+cp936
+```
+
+`GBK（汉字内码扩展规范）` 在 Windows 中常对应 `CP936 (Code Page 936，代码页 936)`。`windows` 模式不等于自动采用 GBK；不能用它替代明确的 GBK 转码。
+
+还要注意，`LESSCHARSET` 的多数选项主要规定哪些字节算普通字符、控制字符或二进制字符。`utf-8` 是其中唯一支持多字节输入的模式。因此，设置 `LESSCHARSET=utf-8` 对当前 UTF-8 仓库是正确修复，但对真实的 GBK 文件并不是通用方案。
+
+## 为什么不能自动识别所有编码
+
+- 有 `BOM (Byte Order Mark，字节顺序标记)` 的文件可以根据标记明确判断部分 Unicode 编码。
+- 没有 BOM 的传统编码只能依据字节分布和语言特征进行统计猜测；短文本或纯 ASCII 片段尤其容易误判。
+- 同一串字节可能在多个编码中都合法，无法仅凭字节得到唯一答案。
+- 一次 `git diff` 可能同时包含多个文件，甚至混合 UTF-8、GBK 和其他编码；合并后的单个输出流只能让 `less` 采用一套解释规则。
+
+所以不存在一个能让 `less` 对所有编码百分之百自动识别的开关。可靠做法是让仓库声明编码，而不是让分页器猜。
+
+### 首选：统一为 UTF-8
+
+Git 官方建议文本优先存储为 UTF-8。这样仓库、代码审查工具、网页界面和终端使用同一套编码，问题最少。
+
+### 必须保留 GBK：按路径声明
+
+若某个目录必须在工作区保持 GBK，可在 `.gitattributes` 中声明：
+
+```gitattributes
+legacy/** text working-tree-encoding=GBK eol=crlf
+```
+
+再对对应路径执行一次：
+
+```cmd
+git add --renormalize -- legacy/
+```
+
+Git 会在内部保存 UTF-8，并在检出工作区时转回 GBK。使用前必须确认团队所有 Git 客户端都支持 `working-tree-encoding`。
+
+如果只想改善差异阅读、不改变文件存储，可给已知 GBK 路径配置 `textconv（文本转换）`，先用 `iconv` 转成 UTF-8 再交给 Git 比较。自动探测工具最多只能提供启发式结果，不能替代路径级编码约定。
+
 ## 升级建议与适用边界
 
 - 较新的 `less` 已改进 Windows 下的 UTF-8 默认行为；升级 Git for Windows 可以减少旧版分页器的字符集问题，但升级前仍应确认团队工具链兼容性。
@@ -92,22 +162,31 @@ git config --global core.quotePath false
 3. `03-current-window.png`：CMD 与 PowerShell 当前窗口的临时修复。
 4. `04-persistent-fix.png`：使用 `setx` 持久设置当前用户变量。
 5. `05-setting-boundaries.png`：区分 `LESSCHARSET`、`chcp`、`core.quotePath` 与 `--no-pager`。
+6. `06-less-version.png`：说明 `less 551` 是第 551 版，不是 `5.5.1`。
+7. `07-lesscharset-limits.png`：列出常用支持项，并明确 GBK / CP936 不受支持。
+8. `08-auto-detection.png`：解释编码自动检测的固有限制与可靠做法。
 
 ## 生成方式与检查结果
 
 - 图片由 Codex 内置 `imagegen` 生成，采用原创 3:4 中文技术信息图；附件截图只用于诊断，没有作为生成输入，避免公开本机路径和仓库信息。
 - 第 1 张首次生成把“分页器”误写，定向修订未生效后已整张重生成；错误版本未纳入项目。
-- 已逐张检查标题、中文、`UTF-8`、`LESSCHARSET`、`setx`、PowerShell 的 `$env:` 写法、`core.quotePath` 与 `git --no-pager diff`。
-- `shorts.mp4` 由仓库自带 `card-video-generator` 按图片自然顺序生成，每张 4 秒，无音轨。
+- 第 7 张初稿用绿色对勾标记“GBK 仍需转换”，视觉关系可能误导；最终版已改为橙色警告图标。
+- 第 8 张初稿插图出现错误字节 `E6 96 X7`，定向修订未生效后已整张重生成；最终版不再使用具体字节示意。
+- 已逐张检查标题、中文、版本号、发布日期、`UTF-8`、`LESSCHARSET`、GBK、CP936、BOM、`.gitattributes`、`setx`、PowerShell 的 `$env:` 写法、`core.quotePath` 与 `git --no-pager diff`。
+- `shorts.mp4` 由仓库自带 `card-video-generator` 按 `01` 到 `08` 八张最终卡片的自然顺序生成，每张 4 秒，共 32 秒，无音轨；原始终端截图不进入视频。
 
 ## 参考资料
 
 - [less FAQ：Non-English characters](https://www.greenwoodsoftware.com/less/faq.html)
+- [Less version 551 发布说明](https://greenwoodsoftware.com/less/news.551.html)
 - [Git `core.quotePath` 配置说明](https://git-scm.com/docs/git-config#Documentation/git-config.txt-corequotePath)
+- [Git `working-tree-encoding` 与 `textconv` 说明](https://git-scm.com/docs/gitattributes)
+- [Git FAQ：文本编码建议](https://git-scm.com/docs/gitfaq)
 - [Microsoft Learn：`chcp`](https://learn.microsoft.com/windows-server/administration/windows-commands/chcp)
 - [Microsoft Learn：Console Code Pages](https://learn.microsoft.com/windows/console/console-code-pages)
 
 ## 仍需人工确认的风险
 
 - 修改在新启动的 CMD / PowerShell 中生效；交付前仍建议由用户在自己的可见终端重新运行一次 `git diff`，确认终端宿主和字体没有额外兼容问题。
-- 卡片中的“永久”是指持久写入当前 Windows 用户环境变量，不是写入系统级环境变量，也不会追溯更新已经运行的进程。
+- 卡片中的“永久”是指持久写入当前 Windows 用户环境变量，不是写入系统级环境变量，也不会追溯更新已经运行的进程；它也不是任意编码自动检测器。
+- `.gitattributes` 的 `working-tree-encoding` 会影响添加和检出，启用前必须确认文件实际编码并核对团队客户端兼容性。
