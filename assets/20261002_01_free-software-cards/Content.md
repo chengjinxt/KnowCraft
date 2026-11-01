@@ -84,3 +84,38 @@
 - 能做什么：2D · 3D · 跨平台导出
 - 核心亮点：MIT License（MIT 许可证），不收版税
 - 适合谁：独立游戏和开发学习者
+
+
+
+
+
+
+
+
+
+=====================
+
+- 电脑上真正好用的免费软件
+- 办公 · 影音 · 创作 · 编程
+- 10 款工具，一次认识
+- 免费不等于同一种授权｜按需选择
+
+01 #LibreOffice
+
+02 #VLC
+
+03 #DaVinci Resolve
+
+04 #OBS Studio
+
+05 #GIMP
+
+06 #Audacity
+
+07 #Blender
+
+08 #Obsidian
+
+09 #Scratch
+
+10 #Godot
