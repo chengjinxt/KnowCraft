@@ -54,6 +54,8 @@ rules:
 
 
 
+- DOMAIN-SUFFIX,chunhuixuefu.com,DIRECT
+- DOMAIN,chunhuixuefu.com,DIRECT
 
 
 
