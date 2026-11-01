@@ -24,6 +24,44 @@ UTF-8 字节：E4 B8 AD
 
 所以它更像“同一串字节被解释错了”，而不是文件内容被 Git 改坏了。
 
+## `less` 是什么
+
+`less` 是 `Terminal Pager（终端分页器）`：它接收一段较长的文本，把内容分屏显示，并提供向前/向后滚动、搜索和退出等查看操作。它不是文本编辑器，不会修改正在查看的文件；也不是 CMD 或 PowerShell 的内置命令。
+
+在 Git for Windows 中，`less` 通常随 Git 一起提供，并由 Git 在需要分页时自动启动，所以日常使用者很少直接输入 `less`。几个常用按键是：
+
+- `Space`：下一页。
+- `b`：上一页。
+- `/关键词`：向后搜索。
+- `n`：跳到下一个匹配项。
+- `q`：退出分页器。
+
+## CMD、PowerShell、Git、`less` 和终端的关系
+
+CMD 与 PowerShell 都是 `Shell（命令解释器）`：负责理解你输入的命令并启动程序。Git 是被 Shell 启动的命令行程序；`less` 是 Git 可调用的分页器；`Terminal（终端）` 则负责把结果显示出来并接收键盘输入。典型流程是：
+
+```text
+用户输入 git diff
+        ↓
+CMD / PowerShell（Shell，命令解释器）
+        ↓ 启动
+Git（生成 diff）
+        ↓ 交给
+less（Pager，分页器）
+        ↓ 呈现
+Terminal（终端）
+```
+
+因此，在 CMD 和 PowerShell 中看到同一种 `<E8>` 现象并不矛盾：两个 Shell 可以启动同一套 Git，而 Git 又启动同一个 `less`。Shell 改了，真正解释输出字节的分页器不一定改变。
+
+下面的命令会让 Git 绕过分页器，把差异直接写到终端：
+
+```cmd
+git --no-pager diff
+```
+
+如果这样显示正常，而普通 `git diff` 显示异常，就可以把排查重点放到 `less`。Git 还可以通过 `GIT_PAGER` 环境变量和 `core.pager` 配置选择分页器；默认选择通常是 `less`。
+
 ## 临时修复
 
 只修当前 CMD 窗口：
@@ -165,6 +203,8 @@ Git 会在内部保存 UTF-8，并在检出工作区时转回 GBK。使用前必
 6. `06-less-version.png`：说明 `less 551` 是第 551 版，不是 `5.5.1`。
 7. `07-lesscharset-limits.png`：列出常用支持项，并明确 GBK / CP936 不受支持。
 8. `08-auto-detection.png`：解释编码自动检测的固有限制与可靠做法。
+9. `09-what-is-less.png`：说明 `less` 是终端分页器，而不是 Shell 内置命令或编辑器。
+10. `10-command-flow.png`：展示 CMD / PowerShell、Git、`less` 与终端的调用关系。
 
 ## 生成方式与检查结果
 
@@ -172,13 +212,17 @@ Git 会在内部保存 UTF-8，并在检出工作区时转回 GBK。使用前必
 - 第 1 张首次生成把“分页器”误写，定向修订未生效后已整张重生成；错误版本未纳入项目。
 - 第 7 张初稿用绿色对勾标记“GBK 仍需转换”，视觉关系可能误导；最终版已改为橙色警告图标。
 - 第 8 张初稿插图出现错误字节 `E6 96 X7`，定向修订未生效后已整张重生成；最终版不再使用具体字节示意。
-- 已逐张检查标题、中文、版本号、发布日期、`UTF-8`、`LESSCHARSET`、GBK、CP936、BOM、`.gitattributes`、`setx`、PowerShell 的 `$env:` 写法、`core.quotePath` 与 `git --no-pager diff`。
-- `shorts.mp4` 由仓库自带 `card-video-generator` 按 `01` 到 `08` 八张最终卡片的自然顺序生成，每张 4 秒，共 32 秒，无音轨；原始终端截图不进入视频。
+- 第 9、10 张首次生成即通过逐字与关系检查；流程卡把 Shell、Git、`less` 和 Terminal 分为四个对象，并单独画出 `--no-pager` 旁路。
+- 已逐张检查标题、中文、版本号、发布日期、`UTF-8`、`LESSCHARSET`、GBK、CP936、BOM、`.gitattributes`、`setx`、PowerShell 的 `$env:` 写法、`core.quotePath`、`git --no-pager diff`、Shell 与 Terminal 的对象归属。
+- `shorts.mp4` 由仓库自带 `card-video-generator` 按 `01` 到 `10` 十张最终卡片的自然顺序生成，每张 4 秒，共 40 秒，无音轨；原始终端截图不进入视频。
 
 ## 参考资料
 
 - [less FAQ：Non-English characters](https://www.greenwoodsoftware.com/less/faq.html)
+- [less FAQ：What is less?](https://www.greenwoodsoftware.com/less/faq.html#what-is-less)
 - [Less version 551 发布说明](https://greenwoodsoftware.com/less/news.551.html)
+- [Git `core.pager` 配置说明](https://git-scm.com/docs/git-config#Documentation/git-config.txt-corepager)
+- [Git `--no-pager` 与 `GIT_PAGER` 说明](https://git-scm.com/docs/git)
 - [Git `core.quotePath` 配置说明](https://git-scm.com/docs/git-config#Documentation/git-config.txt-corequotePath)
 - [Git `working-tree-encoding` 与 `textconv` 说明](https://git-scm.com/docs/gitattributes)
 - [Git FAQ：文本编码建议](https://git-scm.com/docs/gitfaq)

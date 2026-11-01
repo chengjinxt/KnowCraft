@@ -1,9 +1,9 @@
 # git diff 中文乱码修复
 
-`git diff` 中文变成 `<E8><83>...`，通常不是文件坏了，而是 `less（终端分页器）` 没按 `UTF-8 (Unicode Transformation Format–8-bit，Unicode 八位转换格式)` 解释字节。
+`less` 是 Terminal Pager（终端分页器），不是 CMD 或 PowerShell 的内置命令。它分屏显示长文本，可滚动、搜索，按 `q` 退出，不改文件。
 
-当前 CMD 运行 `set LESSCHARSET=utf-8`；PowerShell 运行 `$env:LESSCHARSET='utf-8'`。确认项目是 UTF-8 后，可运行 `setx LESSCHARSET utf-8`，关闭旧窗口再重开。
+输入 `git diff` 后，Shell（命令解释器）启动 Git；Git 生成差异并交给 `less`；`less` 呈现在 Terminal（终端）。两种 Shell 可共用 Git 和 `less`，所以会一起乱码。`git --no-pager diff` 可绕过分页器诊断。
 
-`less 551` 是第 551 版，不是 `5.5.1`。它不接受 `GBK（汉字内码扩展规范）` 或 `CP936 (Code Page 936，代码页 936)`；`utf-8` 是唯一多字节模式。
+中文变成 `<E8>...`，通常是 `less` 没按 `UTF-8 (Unicode Transformation Format–8-bit，Unicode 八位转换格式)` 解释。CMD 用 `set LESSCHARSET=utf-8`，PowerShell 用 `$env:LESSCHARSET='utf-8'`；确认项目为 UTF-8，再用 `setx LESSCHARSET utf-8` 持久设置。
 
-`LESSCHARSET` 是固定规则，不会自动检测。无 `BOM (Byte Order Mark，字节顺序标记)` 的编码只能猜，一次 diff 还可能混合多种编码。可靠做法是统一 UTF-8，或用 `.gitattributes` 按路径声明。`chcp 65001` 改代码页，`core.quotePath=false` 只管路径。
+`less 551` 是第 551 版，不是 `5.5.1`。`LESSCHARSET` 不自动识别编码。应统一 UTF-8，或用 `.gitattributes` 按路径声明。
