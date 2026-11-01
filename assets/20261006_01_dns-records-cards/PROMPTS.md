@@ -8,7 +8,7 @@
 
 ## Final prompt
 
-Create an original Chinese social-media knowledge card for mobile reading. Explain `DNS (Domain Name System，域名系统)` through four common record types: `A (Address，地址记录)`, `CNAME (Canonical Name，规范名称/别名记录)`, `MX (Mail Exchanger，邮件交换记录)`, and `TXT (Text，文本记录)`.
+Create an original Chinese social-media knowledge card for mobile reading. Explain `DNS (Domain Name System，域名系统)` through four common record types: `A (Address，地址记录)`, `CNAME (Canonical Name，规范名称/别名记录)`, `MX (Mail Exchange，邮件交换记录)`, and `TXT (Text，文本记录)`.
 
 Use a light warm background, high-contrast dark-blue headings, teal and orange accents, rounded information blocks, and a few clear flat-vector icons. Arrange the four record types in a 2×2 grid. For each record, show what it maps, what it controls, and one short example. Use only `.test` placeholder hostnames and documentation IPv4 address `192.0.2.10`; do not show any real business domain, vendor brand, logo, QR code, or watermark.
 
