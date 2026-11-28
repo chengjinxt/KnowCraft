@@ -4,7 +4,7 @@
 
 ```text
 Use case: scientific-educational
-Asset type: 八张原创中文 Git、代理、VPN 与安全网关知识卡片，严格 3:4 竖版
+Asset type: 十张原创中文 Git、代理、VPN 与安全网关知识卡片，严格 3:4 竖版
 Audience: 有基础电脑使用经验、但不熟悉网络分层的中文读者
 Style/medium: 清爽扁平矢量技术信息图；完全不透明浅米白背景；深海军蓝标题；钴蓝与青绿色圆角信息块；少量橙色重点；简洁代码仓库、终端、代理节点、网络隧道、路由、DNS 与盾牌图标；大字号、留白充足、手机端易读。
 Composition: 顶部大标题与短副标题，中部使用纵向流程、对比面板或编号清单解释一个中心问题，底部放术语解释或一句准确结论。
@@ -12,7 +12,7 @@ Constraints: 所有引号内文字逐字呈现；准确保留英文大小写、�
 Public-release redaction: 不出现真实企业网段、域名、仓库地址、节点名、订阅地址、本机绝对路径、账号、口令、Token、Cookie、证书或组织标识；需要表达内部目标时使用 <企业网段>、<Git主机> 等占位符。
 ```
 
-第 01 张不使用视觉参考图。第 02 至 08 张使用第 01 张最终成品作为视觉风格参考，只继承配色、标题层级、圆角信息块、扁平矢量图标语言和留白，不复制其中的文字或信息结构。
+第 01 张不使用视觉参考图。第 02 至 10 张使用第 01 张最终成品作为视觉风格参考，只继承配色、标题层级、圆角信息块、扁平矢量图标语言和留白，不复制其中的文字或信息结构。
 
 ## 01 拉代码，到底走谁
 
@@ -202,4 +202,48 @@ Bottom reminder: "VPN 已连接，不等于这次 Git 流量经过它"
 Constraints: 所有引号内文字必须逐字准确；准确保留 Git、git remote -v、http.proxy / ProxyCommand、FlClash、TUN、route print -4、VPN、DNS 的英文大小写、点号、斜杠、连字符和空格；不要添加任何其他文字；不出现真实远程地址、域名、IP 地址、仓库路径、账号或凭据；无品牌 Logo、水印、二维码、页码或平台标识；严格3:4竖版。
 ```
 
-除第 01 张记录的括号定向修订外，其余最终图片均由对应基础提示词直接生成；第 02 至 08 张只使用第 01 张作为视觉风格参考，没有执行局部修图或文字重生成。
+## 09 路由正确，为什么还超时
+
+```text
+Use case: scientific-educational
+Asset type: 原创中文技术知识卡片，系列第9张，严格3:4竖版手机信息图
+Input image: Image 1 仅作为视觉风格参考；继承浅米白背景、深海军蓝标题、钴蓝与青绿色圆角信息块、少量橙色重点、扁平矢量技术图标、大字号和充足留白；不要复制参考图文字或信息结构。
+Primary request: 解释“本机路由已经正确指向 OpenVPN，但 TCP 连接仍然超时”的含义：路由只证明流量从本机进入了 VPN 隧道，不证明 VPN 服务端已把流量转发到内网服务器，也不证明回包能够返回。强调阻断点已缩小到隧道之后。
+Composition/framing: 顶部大标题与短副标题；中部三个纵向圆角流程块并用箭头连接，图标依次为路由表勾选、VPN 隧道、服务器超时；底部一行术语解释和橙色结论条。
+Text (verbatim), and do not add any other text:
+Title: "路由正确，为什么还超时？"
+Subtitle: "流量进了 VPN，不代表已经到达服务器"
+Block 1 title: "本机路由"
+Block 1 line: "目标已指向 VPN 隧道"
+Block 2 title: "TCP 测试"
+Block 2 line: "连接仍然超时"
+Block 3 title: "阻断位置"
+Block 3 line: "已经缩小到隧道之后"
+Small explanation: "TCP = Transmission Control Protocol（传输控制协议）"
+Bottom reminder: "路由只决定从哪发；通不通还要看转发、权限与回程"
+Constraints: 所有引号内文字必须逐字准确；准确保留 OpenVPN、VPN、TCP、Transmission Control Protocol 的英文大小写和空格；不要添加任何其他文字；不得出现真实企业网段、VPN 地址、服务器 IP、接口号、网关、本机路径、账号、凭据或组织标识；无品牌 Logo、水印、二维码、页码或平台标识；严格3:4竖版。
+```
+
+## 10 内网能通，VPN 不通
+
+```text
+Use case: scientific-educational
+Asset type: 原创中文技术知识卡片，系列第10张，严格3:4竖版手机信息图
+Input image: Image 1 仅作为视觉风格参考；继承浅米白背景、深海军蓝标题、钴蓝与青绿色圆角信息块、少量橙色重点、扁平矢量技术图标、大字号和充足留白；不要复制参考图文字或信息结构。
+Primary request: 用对照实验解释：公司内网测试机可以连接同一 SSH 服务器，而 VPN 客户端连接同一目标超时，说明目标主机和 SSH 服务基本正常，排查重点应从目标服务转向 VPN 服务端转发、访问控制和回程路由。不要把“基本正常”写成绝对结论。
+Composition/framing: 顶部大标题与短副标题；中部上下两个对比面板，上方是内网测试机通过绿色连线成功连接服务器，下方是 VPN 客户端通过隧道连接服务器但出现橙色超时标记；其下一个小型结论块；底部一行术语解释和橙色结论条。
+Text (verbatim), and do not add any other text:
+Title: "内网能通，VPN 不通"
+Subtitle: "对照实验能快速缩小排查范围"
+Panel 1 title: "内网测试机"
+Panel 1 line: "SSH 连接成功"
+Panel 2 title: "VPN 客户端"
+Panel 2 line: "同一目标连接超时"
+Conclusion title: "初步结论"
+Conclusion line: "目标主机与 SSH 服务基本正常"
+Small explanation: "SSH = Secure Shell（安全外壳协议）"
+Bottom reminder: "重点检查 VPN 转发、访问控制与回程路由"
+Constraints: 所有引号内文字必须逐字准确；准确保留 VPN、SSH、Secure Shell 的英文大小写和空格；“基本正常”不得改成绝对正常；不要添加任何其他文字；不得出现真实企业网段、VPN 地址、服务器 IP、端口、接口号、网关、本机路径、账号、凭据或组织标识；无品牌 Logo、水印、二维码、页码或平台标识；严格3:4竖版。
+```
+
+除第 01 张记录的括号定向修订外，其余最终图片均由对应基础提示词直接生成；第 02 至 10 张只使用第 01 张作为视觉风格参考，没有执行局部修图或文字重生成。
